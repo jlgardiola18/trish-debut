@@ -48,3 +48,36 @@ if (backgroundSound && soundToggle) {
     });
     playBackgroundSound();
 }
+
+// Calculate dynamic dimensions based on screen width
+function getFlipbookSize() {
+    const isMobile = window.innerWidth <= 768;
+    const width = isMobile ? window.innerWidth : 500;
+    const height = isMobile ? Math.round(window.innerWidth * 1.4) : 700;
+    return { width, height, isMobile };
+}
+
+const size = getFlipbookSize();
+
+const pageFlip = new St.PageFlip(document.getElementById('book'), {
+    width: size.width,
+    height: size.height,
+    size: "fixed",
+    minWidth: 300,
+    maxWidth: 1000,
+    minHeight: 400,
+    maxHeight: 1400,
+    maxShadowOpacity: 0.5,
+    showCover: true,
+    mobileScrollSupport: true, // Enables touch swipes on mobile
+    usePortrait: size.isMobile // Single page view on mobile, double page on desktop
+});
+
+// Load pages
+pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+// Optional: Handle orientation or window resize
+window.addEventListener('resize', () => {
+    const newSize = getFlipbookSize();
+    pageFlip.updateFromHtml(document.querySelectorAll('.page'));
+});
